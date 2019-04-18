@@ -36,6 +36,15 @@ public class TimerTest {
         mockRunnable.verifyRunWithCount(0);
     }
 
+    @Test
+    public void should_call_callback_after_more_than_seconds() {
+        givenClockWithTicks(millisFromNow(0), millisFromNow(1000), millisFromNow(2000));
+
+        timerWithCountDownSecond(2).start(mockRunnable);
+
+        mockRunnable.verifyRunWithCount(2);
+    }
+
     private Timer timerWithCountDownSecond(int second) {
         return new Timer(second, stubClock);
     }

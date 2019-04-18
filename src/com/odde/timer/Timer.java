@@ -5,13 +5,11 @@ import java.time.Instant;
 
 public class Timer {
     private final Clock clock;
-    private Instant startTime;
-    private int countDownSecond;
+    private final int countDownSecond;
 
     public Timer(int countDownSecond, Clock clock) {
         this.countDownSecond = countDownSecond;
         this.clock = clock;
-        startTime = clock.instant();
     }
 
     public Timer(int countDownSecond) {
@@ -19,10 +17,12 @@ public class Timer {
     }
 
     public void start(Runnable runnable) {
-        while (countDownSecond > 0) {
+        Instant startTime = clock.instant();
+        int currentCountDown = countDownSecond;
+        while (currentCountDown > 0) {
             if (clock.instant().minusSeconds(1).equals(startTime)) {
                 runnable.run();
-                countDownSecond--;
+                currentCountDown--;
                 startTime = startTime.plusSeconds(1);
             }
         }

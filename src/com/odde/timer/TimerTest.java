@@ -46,6 +46,18 @@ public class TimerTest {
     }
 
     @Test
+    public void should_be_able_to_start_more_than_once() {
+        givenClockWithTicks(millisFromNow(0), millisFromNow(1000), millisFromNow(2000), millisFromNow(3000));
+
+        Timer timer = timerWithCountDownSecond(1);
+        timer.start(mockRunnable);
+        MockRunnable anotherMockRunnable = new MockRunnable();
+        timer.start(anotherMockRunnable);
+
+        anotherMockRunnable.verifyRunWithCount(1);
+    }
+
+    @Test
     public void acceptance_test() {
         new Timer(5).start(mockRunnable);
 

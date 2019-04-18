@@ -3,6 +3,7 @@ package com.odde.timer;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.util.Arrays;
 
 public class TimerTest {
 
@@ -11,7 +12,7 @@ public class TimerTest {
 
     @Test
     public void should_not_call_callback_when_count_down_is_0() {
-        givenClockWithTicks(millisFromNow(0), millisFromNow(1000));
+        givenClockWithTicks(0, 1);
 
         timerWithCountDownSecond(0).start(mockRunnable);
 
@@ -20,7 +21,7 @@ public class TimerTest {
 
     @Test
     public void should_call_callback_after_one_second() {
-        givenClockWithTicks(millisFromNow(0), millisFromNow(1000));
+        givenClockWithTicks(0, 1);
 
         timerWithCountDownSecond(1).start(mockRunnable);
 
@@ -29,7 +30,7 @@ public class TimerTest {
 
     @Test
     public void should_call_callback_after_more_than_seconds() {
-        givenClockWithTicks(millisFromNow(0), millisFromNow(1000), millisFromNow(2000));
+        givenClockWithTicks(0, 1, 2);
 
         timerWithCountDownSecond(2).start(mockRunnable);
 
@@ -38,7 +39,7 @@ public class TimerTest {
 
     @Test
     public void should_call_callback_until_one_second_arrives() {
-        givenClockWithTicks(millisFromNow(0), millisFromNow(500), millisFromNow(1000));
+        givenClockWithTicks(0, 0.5, 1);
 
         timerWithCountDownSecond(1).start(mockRunnable);
 
@@ -47,10 +48,10 @@ public class TimerTest {
 
     @Test
     public void should_be_able_to_start_more_than_once() {
-        givenClockWithTicks(millisFromNow(0), millisFromNow(1000), millisFromNow(2000), millisFromNow(3000));
-
+        givenClockWithTicks(0, 1, 2, 3);
         Timer timer = timerWithCountDownSecond(1);
         timer.start(mockRunnable);
+
         MockRunnable anotherMockRunnable = new MockRunnable();
         timer.start(anotherMockRunnable);
 
@@ -68,8 +69,12 @@ public class TimerTest {
         return new Timer(second, stubClock);
     }
 
-    private void givenClockWithTicks(Instant... ticks) {
-        stubClock.setTicks(ticks);
+    private void givenClockWithTicks(double... ticksInMillis) {
+        stubClock.setTicks(instantsOf(ticksInMillis));
+    }
+
+    private Instant[] instantsOf(double[] ticksInMillis) {
+        return Arrays.stream(ticksInMillis).mapToObj(millis -> millisFromNow((long) millis * 1000)).toArray(Instant[]::new);
     }
 
     private Instant millisFromNow(long millis) {

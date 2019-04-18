@@ -14,11 +14,17 @@ public class Timer {
         startTime = clock.instant();
     }
 
+    public Timer(int countDownSecond) {
+        this(countDownSecond, Clock.systemUTC());
+    }
+
     public void start(Runnable runnable) {
-        while (countDownSecond > 0 && clock.instant().minusSeconds(1).equals(startTime)) {
-            runnable.run();
-            countDownSecond--;
-            startTime = startTime.plusSeconds(1);
+        while (countDownSecond > 0) {
+            if (clock.instant().minusSeconds(1).equals(startTime)) {
+                runnable.run();
+                countDownSecond--;
+                startTime = startTime.plusSeconds(1);
+            }
         }
     }
 }

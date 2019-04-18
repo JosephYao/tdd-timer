@@ -28,21 +28,28 @@ public class TimerTest {
     }
 
     @Test
-    public void should_not_call_callback_only_after_half_second() {
-        givenClockWithTicks(millisFromNow(0), millisFromNow(500));
-
-        timerWithCountDownSecond(1).start(mockRunnable);
-
-        mockRunnable.verifyRunWithCount(0);
-    }
-
-    @Test
     public void should_call_callback_after_more_than_seconds() {
         givenClockWithTicks(millisFromNow(0), millisFromNow(1000), millisFromNow(2000));
 
         timerWithCountDownSecond(2).start(mockRunnable);
 
         mockRunnable.verifyRunWithCount(2);
+    }
+
+    @Test
+    public void should_call_callback_until_one_second_arrives() {
+        givenClockWithTicks(millisFromNow(0), millisFromNow(500), millisFromNow(1000));
+
+        timerWithCountDownSecond(1).start(mockRunnable);
+
+        mockRunnable.verifyRunWithCount(1);
+    }
+
+    @Test
+    public void acceptance_test() {
+        new Timer(5).start(mockRunnable);
+
+        mockRunnable.verifyRunWithCount(5);
     }
 
     private Timer timerWithCountDownSecond(int second) {

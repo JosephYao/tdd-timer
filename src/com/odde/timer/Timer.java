@@ -1,10 +1,10 @@
 package com.odde.timer;
 
 import java.time.Clock;
-import java.time.Instant;
+
+import static java.time.Clock.systemUTC;
 
 public class Timer {
-    private static final int SECOND_TO_TICK = 1;
     private final Clock clock;
     private final int countDownSecond;
 
@@ -14,26 +14,19 @@ public class Timer {
     }
 
     public Timer(int countDownSecond) {
-        this(countDownSecond, Clock.systemUTC());
+        this(countDownSecond, systemUTC());
     }
 
     public void start(Runnable runnable) {
-        Instant startTime = clock.instant();
+        Tick tick = new Tick(clock.instant(), clock);
         int currentCountDown = countDownSecond;
         while (currentCountDown > 0) {
-            if (isNextTick(startTime)) {
+            if (tick.isNext()) {
                 runnable.run();
                 currentCountDown--;
-                startTime = nextTick(startTime);
+                tick = tick.next();
             }
         }
     }
 
-    private Instant nextTick(Instant startTime) {
-        return startTime.plusSeconds(SECOND_TO_TICK);
-    }
-
-    private boolean isNextTick(Instant startTime) {
-        return clock.instant().minusSeconds(SECOND_TO_TICK).equals(startTime);
-    }
 }

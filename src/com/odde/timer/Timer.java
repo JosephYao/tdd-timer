@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 
 public class Timer {
+    private static final int SECOND_TO_TICK = 1;
     private final Clock clock;
     private final int countDownSecond;
 
@@ -20,11 +21,19 @@ public class Timer {
         Instant startTime = clock.instant();
         int currentCountDown = countDownSecond;
         while (currentCountDown > 0) {
-            if (clock.instant().minusSeconds(1).equals(startTime)) {
+            if (isNextTick(startTime)) {
                 runnable.run();
                 currentCountDown--;
-                startTime = startTime.plusSeconds(1);
+                startTime = nextTick(startTime);
             }
         }
+    }
+
+    private Instant nextTick(Instant startTime) {
+        return startTime.plusSeconds(SECOND_TO_TICK);
+    }
+
+    private boolean isNextTick(Instant startTime) {
+        return clock.instant().minusSeconds(SECOND_TO_TICK).equals(startTime);
     }
 }

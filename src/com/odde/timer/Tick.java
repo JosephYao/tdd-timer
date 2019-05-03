@@ -18,6 +18,6 @@ public class Tick {
     }
 
     public boolean isNext() {
-        return clock.instant().minusSeconds(SECOND_TO_TICK).equals(time);
+        return clock.instant().minusSeconds(SECOND_TO_TICK).compareTo(time) >= 0;
     }
 }

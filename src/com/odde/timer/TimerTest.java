@@ -59,6 +59,15 @@ public class TimerTest {
     }
 
     @Test
+    public void should_call_callback_2_times_when_interval_more_than_one_second() {
+        givenClockWithTicks(0, 1, 2.01);
+        Timer timer = timerWithCountDownSecond(2);
+        timer.start(mockRunnable);
+
+        mockRunnable.verifyRunWithCount(2);
+    }
+
+    @Test
     public void acceptance_test() {
         new Timer(5).start(mockRunnable);
 
@@ -74,7 +83,7 @@ public class TimerTest {
     }
 
     private Instant[] instantsOf(double[] ticksInMillis) {
-        return Arrays.stream(ticksInMillis).mapToObj(millis -> millisFromNow((long) millis * 1000)).toArray(Instant[]::new);
+        return Arrays.stream(ticksInMillis).mapToObj(millis -> millisFromNow(Math.round(millis * 1000))).toArray(Instant[]::new);
     }
 
     private Instant millisFromNow(long millis) {
